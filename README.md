@@ -112,3 +112,15 @@ when recreating containers. The password file must match the password used when
 the volume was first initialized; changing the file alone does not rotate an
 existing database password. The first schema is created at startup; future schema
 changes will require explicit migrations.
+
+To verify the complete Compose deployment with Docker running:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/verify_compose.py
+```
+
+The verification creates a uniquely named project with a temporary password and
+an available host port. It checks health, the installed CLI, administrator bootstrap,
+role restrictions, token reset, account disablement, audit/log token exclusion and
+PostgreSQL persistence after container recreation. It removes only its own test
+containers and volume when finished; it does not modify the normal deployment.

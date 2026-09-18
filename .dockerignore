@@ -4,3 +4,6 @@
 .ruff_cache
 .venv
 __pycache__
+.secrets/
+*.db
+*.db-*

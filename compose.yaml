@@ -1,6 +1,13 @@
 services:
   api:
     build: .
+    environment:
+      SLA_DATABASE_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets:
+      - postgres_password
+    depends_on:
+      db:
+        condition: service_healthy
     ports:
       - "${SLA_API_PORT:-8000}:8000"
     healthcheck:
@@ -16,3 +23,25 @@ services:
       timeout: 3s
       retries: 10
       start_period: 2s
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: sla
+      POSTGRES_USER: sla
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets:
+      - postgres_password
+    volumes:
+      - identity_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sla -d sla"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
+
+secrets:
+  postgres_password:
+    file: ./.secrets/postgres_password.txt
+
+volumes:
+  identity_data:
